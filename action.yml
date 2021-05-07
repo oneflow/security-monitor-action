@@ -1,0 +1,8 @@
+name: 'Security Monitor'
+description: 'Checks if repo has security vulnerability issues'
+inputs: 
+  gh-pat:
+    description: The GitHub personal access token to be able to perform the action
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
