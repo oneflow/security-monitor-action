@@ -17,10 +17,12 @@ async function issuesMessage(repoInfo, vulnerabilityIssues) {
 	await vulnerabilityIssues.forEach((issue) => {
 		const package = new RegExp(`.*bump\s${issue.securityVulnerability.package.name}\s.*`);
 		const pr = _.find(repoInfo.pullRequests.nodes, (node) => node.title.match(package));
-		issuesList = `${issuesList}
+		if (!issuesList.includes(pr.url)) {
+			issuesList = `${issuesList}
 - [${issue.securityVulnerability.package.name}](${issue.securityVulnerability.advisory.notificationsPermalink}) (${
-			issue.securityVulnerability.severity
-		} severity). PR created by dependabot: ${pr ? pr.url : 'none'}`;
+				issue.securityVulnerability.severity
+			} severity). PR created by dependabot: ${pr ? pr.url : 'none'}`;
+		}
 	});
 	return issuesList;
 }
