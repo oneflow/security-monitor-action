@@ -4,10 +4,12 @@
 	"description": "A GitHub Action that checks if repo has security vulnerability issues.",
 	"main": "index.js",
 	"scripts": {
-		"test": "jest --coverage"
+		"test": "jest --coverage",
+		"build": "ncc build index.js --license licenses.txt"
 	},
 	"dependencies": {
 		"@actions/core": "^1.2.7",
-		"@actions/github": "^4.0.0"
+		"@actions/github": "^4.0.0",
+		"lodash": "^4.17.21"
 	}
 }
