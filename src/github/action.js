@@ -15,8 +15,8 @@ async function getVulnerabilities(repo, owner, token) {
 async function issuesMessage(repoInfo, vulnerabilityIssues) {
 	let issuesList = '';
 	await vulnerabilityIssues.forEach((issue) => {
-		const package = new RegExp(`.*bump\s${issue.securityVulnerability.package.name}\s.*`);
-		const pr = _.find(repoInfo.pullRequests.nodes, (node) => node.title.match(package));
+		const packageName = new RegExp(`.*bump\\s${issue.securityVulnerability.package.name}\\s.*`);
+		const pr = _.find(repoInfo.pullRequests.nodes, (node) => node.title.match(packageName));
 		if (pr && pr.url && !issuesList.includes(pr.url)) {
 			issuesList = `${issuesList}
 - [${issue.securityVulnerability.package.name}](${issue.securityVulnerability.advisory.notificationsPermalink}) (${
