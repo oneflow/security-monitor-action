@@ -1,0 +1,13 @@
+{
+	"name": "security-check-action",
+	"version": "0.0.1",
+	"description": "A GitHub Action that checks if repo has security vulnerability issues.",
+	"main": "index.js",
+	"scripts": {
+		"test": "jest --coverage"
+	},
+	"dependencies": {
+		"@actions/core": "^1.2.7",
+		"@actions/github": "^4.0.0"
+	}
+}

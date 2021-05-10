@@ -1,2 +1,38 @@
 # security-monitor-action
+
 A GitHub Action that checks if repo has security vulnerability issues.
+
+## Usage
+### Pre-requisites
+Create a workflow `.yml` file in your `.github/workflows` directory. An [example workflow](#example-workflow) is available below. For more information, reference the GitHub Help Documentation for [Creating a workflow file](https://help.github.com/en/articles/configuring-a-workflow#creating-a-workflow-file).
+
+### Inputs
+
+- `gh-pat`: The GitHub personal access token to be able to perform the action.
+
+### Example workflow
+This action will run on every `pull_request` with a specified type and on all branches:
+
+```yaml
+name: Security Monitor GitHub Action
+
+on:
+  pull_request:
+    types: 
+      - opened
+      - reopened
+      - synchronize
+      - review_requested
+    branches:
+      - "*"
+
+jobs:
+  security_monitor:
+    runs-on: ubuntu-latest
+    name: Security Monitor
+    steps:
+    - name: Security Monitor
+      uses: oneflow/security-monitor-action@master
+      with:
+        gh-pat: ${{ secrets.GH_PAT }}
+```
