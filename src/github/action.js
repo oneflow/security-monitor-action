@@ -25,13 +25,17 @@ async function issuesMessage(repoInfo, vulnerabilityIssues) {
 		return rank[issue.securityVulnerability.severity];
 	});
 	await vulnerabilityIssuesSorted.forEach((issue) => {
-		const packageName = new RegExp(`.*bump\\s${issue.securityVulnerability.package.name}\\s.*`);
-		const pr = _.find(repoInfo.pullRequests.nodes, (node) => node.title.match(packageName));
-		if (pr && pr.url && !issuesList.includes(pr.url)) {
+		const packageName = issue.securityVulnerability.package.name;
+		const issueLink = issue.securityVulnerability.advisory.notificationsPermalink;
+		const issueSeverity = issue.securityVulnerability.severity;
+		const prForPackage = new RegExp(`.*[B|b]ump\\s${packageName}\\s.*`);
+		const pr = _.find(repoInfo.pullRequests.nodes, (node) => node.title.match(prForPackage));
+		if (pr && pr.url && !issuesList.includes(pr.url) && !issuesList.includes(`[${packageName}]`)) {
 			issuesList = `${issuesList}
-- [${issue.securityVulnerability.package.name}](${issue.securityVulnerability.advisory.notificationsPermalink}) (${
-				issue.securityVulnerability.severity
-			} severity). PR created by dependabot: ${pr ? pr.url : 'none'}`;
+- [${packageName}](${issueLink}) (${issueSeverity} severity). PR created by dependabot: ${pr.url}`;
+		} else if (!issuesList.includes(`[${packageName}]`)) {
+			issuesList = `${issuesList}
+- [${packageName}](${issueLink}) (${issueSeverity} severity). PR created by dependabot: none`;
 		}
 	});
 	return issuesList;
