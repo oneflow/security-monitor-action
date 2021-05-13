@@ -4,7 +4,13 @@ const { Octokit } = require('@octokit/rest');
 const { _ } = require('lodash');
 const action = require('./src/github/action');
 const ctx = require('./src/github/context');
-const { noIssues, minorIssues, criticalHighIssues, criticalHighIssuesFixed } = require('./src/messages');
+const {
+	noIssues,
+	minorIssues,
+	criticalHighIssues,
+	criticalHighIssuesFixed,
+	minorIssuesFixed,
+} = require('./src/messages');
 
 run();
 
@@ -88,11 +94,16 @@ async function run() {
 				});
 			} else {
 				if (pullRequestCreator !== 'dependabot[bot]') {
+					const commitStatus = await action.findStatus(otherIssues, prCommits, pullRequestCreator);
+					const prMessage =
+						commitStatus === 'failure'
+							? minorIssues(await action.issuesMessage(repoInfo, otherIssues))
+							: minorIssuesFixed;
 					await octokit.rest.issues.createComment({
 						owner: repoOwner,
 						repo: repoName,
 						issue_number: pullRequestNumber,
-						body: minorIssues(await action.issuesMessage(repoInfo, otherIssues)),
+						body: prMessage,
 					});
 				}
 				await octokit.rest.repos.createCommitStatus({

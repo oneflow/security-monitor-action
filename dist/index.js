@@ -10,7 +10,13 @@ const { Octokit } = __nccwpck_require__(9438);
 const { _ } = __nccwpck_require__(4368);
 const action = __nccwpck_require__(5124);
 const ctx = __nccwpck_require__(3088);
-const { noIssues, minorIssues, criticalHighIssues, criticalHighIssuesFixed } = __nccwpck_require__(1550);
+const {
+	noIssues,
+	minorIssues,
+	criticalHighIssues,
+	criticalHighIssuesFixed,
+	minorIssuesFixed,
+} = __nccwpck_require__(1550);
 
 run();
 
@@ -94,11 +100,16 @@ async function run() {
 				});
 			} else {
 				if (pullRequestCreator !== 'dependabot[bot]') {
+					const commitStatus = await action.findStatus(otherIssues, prCommits, pullRequestCreator);
+					const prMessage =
+						commitStatus === 'failure'
+							? minorIssues(await action.issuesMessage(repoInfo, otherIssues))
+							: minorIssuesFixed;
 					await octokit.rest.issues.createComment({
 						owner: repoOwner,
 						repo: repoName,
 						issue_number: pullRequestNumber,
-						body: minorIssues(await action.issuesMessage(repoInfo, otherIssues)),
+						body: prMessage,
 					});
 				}
 				await octokit.rest.repos.createCommitStatus({
@@ -24606,8 +24617,9 @@ async function findStatus(issuesList, prCommits, prCreator) {
 	} else {
 		await issuesList.forEach((issue) => {
 			const packageName = issue.securityVulnerability.package.name;
+			const commitMessage = new RegExp(`.*[B|b]ump\\s${packageName}\\s.*`);
 			prCommits.forEach((commit) => {
-				statuses.push(commit.commit.messageHeadline.includes(packageName) ? 'success' : 'failure');
+				statuses.push(commit.commit.messageHeadline.match(commitMessage) ? 'success' : 'failure');
 			});
 		});
 	}
@@ -24728,16 +24740,23 @@ module.exports = {
 	minorIssues: (issuesList) => `
 Congrats! The repository doesn't have security issues with CRITICAL or HIGH severity.
 You are good to go but it would be cool if you could review these PRs dependabot created for you or fix the issue yourself if there's no PR yet:
-${issuesList}`,
+${issuesList}
+
+If you're planning on fixing a dependency, make sure to include \`bump {packageName} from {version} to {version}\` into your commit message`,
 
 	criticalHighIssues: (issuesCount, issuesList) => `
 Your PR is blocked because this repository has ${issuesCount} security vulnerabillity issue(s) with critical or high severity:
 ${issuesList}
 
 To unblock your PR you must fix security issues with CRITICAL or HIGH severity.
+
+If there's no dependabot PR to fix the issue yet and you're planning on fixing it, make sure to include \`bump {packageName} from {version} to {version}\` into your commit message.
+
 If you already fixed this issue in a different PR, please merge your branch with the default repo branch to unblock it.`,
 
 	criticalHighIssuesFixed: 'It seems like your PR fixes one of the security vulnerability issues. Good job!',
+
+	minorIssuesFixed: 'You did great fixing this vulnerability issue. :1st_place_medal:',
 };
 
 
