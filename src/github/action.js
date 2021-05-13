@@ -48,8 +48,9 @@ async function findStatus(issuesList, prCommits, prCreator) {
 	} else {
 		await issuesList.forEach((issue) => {
 			const packageName = issue.securityVulnerability.package.name;
+			const commitMessage = new RegExp(`.*[B|b]ump\\s${packageName}\\s.*`);
 			prCommits.forEach((commit) => {
-				statuses.push(commit.commit.messageHeadline.includes(packageName) ? 'success' : 'failure');
+				statuses.push(commit.commit.messageHeadline.match(commitMessage) ? 'success' : 'failure');
 			});
 		});
 	}
