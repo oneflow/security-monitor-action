@@ -43,7 +43,7 @@ async function run() {
 		const repoPRs = repoInfo.pullRequests.nodes;
 		const [prInfo] = await _.filter(repoPRs, (node) => node.number === pullRequestNumber);
 		const prCommits = prInfo.commits.nodes;
-		const repoVulnerabilityAlerts = repoInfo.vulnerabilityAlerts.nodes;
+		const repoVulnerabilityAlerts = await _.filter(repoInfo.vulnerabilityAlerts.nodes, (node) => !node.dismissedAt);
 		const criticalIssues = await _.filter(repoVulnerabilityAlerts, (node) =>
 			node.securityVulnerability.severity.match(/CRITICAL|HIGH/),
 		);
@@ -24708,6 +24708,7 @@ module.exports = {
       }
       vulnerabilityAlerts(first: 100) {
         nodes {
+          dismissedAt
           securityVulnerability {
                       severity
                       advisory {

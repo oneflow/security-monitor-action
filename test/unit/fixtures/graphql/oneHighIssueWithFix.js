@@ -22,6 +22,7 @@ module.exports = {
 			vulnerabilityAlerts: {
 				nodes: [
 					{
+						dismissedAt: null,
 						securityVulnerability: {
 							severity: 'HIGH',
 							advisory: {

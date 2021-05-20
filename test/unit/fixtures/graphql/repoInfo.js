@@ -78,6 +78,7 @@ module.exports = {
 			vulnerabilityAlerts: {
 				nodes: [
 					{
+						dismissedAt: null,
 						securityVulnerability: {
 							severity: 'HIGH',
 							advisory: {
@@ -94,6 +95,7 @@ module.exports = {
 						},
 					},
 					{
+						dismissedAt: '2021-05-20T10:21:15Z',
 						securityVulnerability: {
 							severity: 'LOW',
 							advisory: {
@@ -110,6 +112,7 @@ module.exports = {
 						},
 					},
 					{
+						dismissedAt: null,
 						securityVulnerability: {
 							severity: 'MODERATE',
 							advisory: {
@@ -126,6 +129,7 @@ module.exports = {
 						},
 					},
 					{
+						dismissedAt: null,
 						securityVulnerability: {
 							severity: 'HIGH',
 							advisory: {
@@ -142,6 +146,7 @@ module.exports = {
 						},
 					},
 					{
+						dismissedAt: null,
 						securityVulnerability: {
 							severity: 'HIGH',
 							advisory: {
@@ -158,6 +163,7 @@ module.exports = {
 						},
 					},
 					{
+						dismissedAt: null,
 						securityVulnerability: {
 							severity: 'HIGH',
 							advisory: {
@@ -174,6 +180,7 @@ module.exports = {
 						},
 					},
 					{
+						dismissedAt: null,
 						securityVulnerability: {
 							severity: 'LOW',
 							advisory: {
@@ -190,6 +197,7 @@ module.exports = {
 						},
 					},
 					{
+						dismissedAt: null,
 						securityVulnerability: {
 							severity: 'LOW',
 							advisory: {
@@ -206,6 +214,7 @@ module.exports = {
 						},
 					},
 					{
+						dismissedAt: null,
 						securityVulnerability: {
 							severity: 'HIGH',
 							advisory: {
@@ -222,6 +231,7 @@ module.exports = {
 						},
 					},
 					{
+						dismissedAt: null,
 						securityVulnerability: {
 							severity: 'HIGH',
 							advisory: {
@@ -238,6 +248,7 @@ module.exports = {
 						},
 					},
 					{
+						dismissedAt: null,
 						securityVulnerability: {
 							severity: 'HIGH',
 							advisory: {
@@ -254,6 +265,7 @@ module.exports = {
 						},
 					},
 					{
+						dismissedAt: null,
 						securityVulnerability: {
 							severity: 'CRITICAL',
 							advisory: {
