@@ -18,6 +18,7 @@ module.exports = {
       }
       vulnerabilityAlerts(first: 100) {
         nodes {
+          dismissedAt
           securityVulnerability {
                       severity
                       advisory {

@@ -41,13 +41,13 @@ async function run() {
 		const repoDefaultBranch = ctx.getDefaultBranch(context);
 		const repoInfo = await action.getVulnerabilities(repoName, repoOwner, process.env.GITHUB_TOKEN || ghPat);
 		const repoPRs = repoInfo.pullRequests.nodes;
-		const [prInfo] = await _.filter(repoPRs, (node) => node.number === pullRequestNumber);
+		const [prInfo] = _.filter(repoPRs, (node) => node.number === pullRequestNumber);
 		const prCommits = prInfo.commits.nodes;
-		const repoVulnerabilityAlerts = repoInfo.vulnerabilityAlerts.nodes;
-		const criticalIssues = await _.filter(repoVulnerabilityAlerts, (node) =>
+		const repoVulnerabilityAlerts = _.filter(repoInfo.vulnerabilityAlerts.nodes, (node) => !node.dismissedAt);
+		const criticalIssues = _.filter(repoVulnerabilityAlerts, (node) =>
 			node.securityVulnerability.severity.match(/CRITICAL|HIGH/),
 		);
-		const otherIssues = await _.filter(
+		const otherIssues = _.filter(
 			repoVulnerabilityAlerts,
 			(node) => !node.securityVulnerability.severity.match(/CRITICAL|HIGH/),
 		);
@@ -24708,6 +24708,7 @@ module.exports = {
       }
       vulnerabilityAlerts(first: 100) {
         nodes {
+          dismissedAt
           securityVulnerability {
                       severity
                       advisory {
