@@ -9,6 +9,7 @@ Create a workflow `.yml` file in your `.github/workflows` directory. An [example
 ### Inputs
 
 - `gh-pat`: The GitHub personal access token to be able to perform the action.
+- `action-user`: The name of the user who triggers the action (gh-pat owner).
 
 ### Example workflow
 This action will run on every `pull_request` with a specified type and on all branches:
@@ -35,4 +36,5 @@ jobs:
       uses: oneflow/security-monitor-action@master
       with:
         gh-pat: ${{ secrets.GH_PAT }}
+        action-user: ${{ secrets.ACTION_USER }}
 ```

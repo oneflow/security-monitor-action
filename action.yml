@@ -3,6 +3,8 @@ description: 'Checks if repo has security vulnerability issues'
 inputs: 
   gh-pat:
     description: The GitHub personal access token to be able to perform the action
+  action-user:
+    description: The name of the user who triggers the action (gh-pat owner)
 runs:
   using: 'node12'
   main: 'dist/index.js'

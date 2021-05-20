@@ -23,8 +23,9 @@ async function run() {
 		const payload = JSON.stringify(context.payload, undefined, 2);
 		console.log(`The event payload: ${payload}`);
 
-		// Get GitHub Personal Access Token
+		// Get GitHub Personal Access Token and user name
 		const ghPat = core.getInput('gh-pat', { required: true });
+		const actionUser = core.getInput('action-user', { required: true });
 		const octokit = new Octokit({ auth: ghPat });
 
 		const repoName = ctx.getRepoName(context);
@@ -61,6 +62,19 @@ async function run() {
 				contexts: requiredStatusChecks.data,
 			});
 		}
+		// check if PR already has a comment from the action.
+		const prComments = await octokit.rest.issues.listComments({
+			owner: repoOwner,
+			repo: repoName,
+			issue_number: pullRequestNumber,
+		});
+		let actionComment;
+		if (prComments.data.length) {
+			actionComment = _.findLast(
+				prComments.data,
+				(comment) => comment.user.login === process.env.GITHUB_ACTION_USER || actionUser,
+			);
+		}
 
 		// check vulnerability alerts
 		if (repoVulnerabilityAlerts.length) {
@@ -78,12 +92,21 @@ async function run() {
 						  )
 						: criticalHighIssuesFixed;
 				if (pullRequestCreator !== 'dependabot[bot]') {
-					octokit.rest.issues.createComment({
-						owner: repoOwner,
-						repo: repoName,
-						issue_number: pullRequestNumber,
-						body: prMessage,
-					});
+					if (actionComment) {
+						await octokit.rest.issues.updateComment({
+							owner: repoOwner,
+							repo: repoName,
+							comment_id: actionComment.id,
+							body: `${prMessage}\n\n_Lates update timestamp: ${new Date().toISOString()}_`,
+						});
+					} else {
+						await octokit.rest.issues.createComment({
+							owner: repoOwner,
+							repo: repoName,
+							issue_number: pullRequestNumber,
+							body: prMessage,
+						});
+					}
 				}
 				await octokit.rest.repos.createCommitStatus({
 					context: 'security-monitor',
@@ -99,12 +122,21 @@ async function run() {
 						commitStatus === 'failure'
 							? minorIssues(await action.issuesMessage(repoInfo, otherIssues))
 							: minorIssuesFixed;
-					await octokit.rest.issues.createComment({
-						owner: repoOwner,
-						repo: repoName,
-						issue_number: pullRequestNumber,
-						body: prMessage,
-					});
+					if (actionComment) {
+						await octokit.rest.issues.updateComment({
+							owner: repoOwner,
+							repo: repoName,
+							comment_id: actionComment.id,
+							body: `${prMessage}\n\n_Lates update timestamp: ${new Date().toISOString()}_`,
+						});
+					} else {
+						await octokit.rest.issues.createComment({
+							owner: repoOwner,
+							repo: repoName,
+							issue_number: pullRequestNumber,
+							body: prMessage,
+						});
+					}
 				}
 				await octokit.rest.repos.createCommitStatus({
 					context: 'security-monitor',
@@ -117,12 +149,21 @@ async function run() {
 		} else {
 			// repo doesn't have any vulnerability alerts
 			console.log(`${context.payload.repository.name} repo doesn't have any vulnerability alerts`);
-			await octokit.rest.issues.createComment({
-				owner: repoOwner,
-				repo: repoName,
-				issue_number: pullRequestNumber,
-				body: noIssues,
-			});
+			if (actionComment) {
+				await octokit.rest.issues.updateComment({
+					owner: repoOwner,
+					repo: repoName,
+					comment_id: actionComment.id,
+					body: `${noIssues}\n\n_Lates update timestamp: ${new Date().toISOString()}_`,
+				});
+			} else {
+				await octokit.rest.issues.createComment({
+					owner: repoOwner,
+					repo: repoName,
+					issue_number: pullRequestNumber,
+					body: noIssues,
+				});
+			}
 			await octokit.rest.repos.createCommitStatus({
 				context: 'security-monitor',
 				owner: repoOwner,
