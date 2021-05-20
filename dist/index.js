@@ -103,7 +103,7 @@ async function run() {
 							owner: repoOwner,
 							repo: repoName,
 							comment_id: actionComment.id,
-							body: `${prMessage}\n\n_Lates update timestamp: ${new Date().toISOString()}_`,
+							body: `${prMessage}\n\n_Latest update timestamp: ${new Date().toISOString()}_`,
 						});
 					} else {
 						await octokit.rest.issues.createComment({
@@ -133,7 +133,7 @@ async function run() {
 							owner: repoOwner,
 							repo: repoName,
 							comment_id: actionComment.id,
-							body: `${prMessage}\n\n_Lates update timestamp: ${new Date().toISOString()}_`,
+							body: `${prMessage}\n\n_Latest update timestamp: ${new Date().toISOString()}_`,
 						});
 					} else {
 						await octokit.rest.issues.createComment({
@@ -160,7 +160,7 @@ async function run() {
 					owner: repoOwner,
 					repo: repoName,
 					comment_id: actionComment.id,
-					body: `${noIssues}\n\n_Lates update timestamp: ${new Date().toISOString()}_`,
+					body: `${noIssues}\n\n_Latest update timestamp: ${new Date().toISOString()}_`,
 				});
 			} else {
 				await octokit.rest.issues.createComment({
