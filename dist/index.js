@@ -78,7 +78,7 @@ async function run() {
 		if (prComments.data.length) {
 			actionComment = _.findLast(
 				prComments.data,
-				(comment) => comment.user.login === process.env.GITHUB_ACTION_USER || actionUser,
+				(comment) => comment.user.login === (process.env.GITHUB_ACTION_USER || actionUser),
 			);
 		}
 
