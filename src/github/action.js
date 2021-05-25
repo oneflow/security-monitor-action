@@ -43,7 +43,7 @@ async function issuesMessage(repoInfo, vulnerabilityIssues) {
 
 async function findStatus(issuesList, prCommits, prCreator) {
 	let statuses = [];
-	if (prCreator === 'dependabot[bot]') {
+	if (prCreator.match(/dependabot\[bot\]|oneflow/)) {
 		statuses.push('success');
 	} else {
 		await issuesList.forEach((issue) => {

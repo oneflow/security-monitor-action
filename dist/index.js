@@ -97,7 +97,7 @@ async function run() {
 								await action.issuesMessage(repoInfo, criticalIssues),
 						  )
 						: criticalHighIssuesFixed;
-				if (pullRequestCreator !== 'dependabot[bot]') {
+				if (!pullRequestCreator.match(/dependabot\[bot\]|oneflow/)) {
 					if (actionComment) {
 						await octokit.rest.issues.updateComment({
 							owner: repoOwner,
@@ -122,7 +122,7 @@ async function run() {
 					state: commitStatus,
 				});
 			} else {
-				if (pullRequestCreator !== 'dependabot[bot]') {
+				if (!pullRequestCreator.match(/dependabot\[bot\]|oneflow/)) {
 					const commitStatus = await action.findStatus(otherIssues, prCommits, pullRequestCreator);
 					const prMessage =
 						commitStatus === 'failure'
@@ -24653,7 +24653,7 @@ async function issuesMessage(repoInfo, vulnerabilityIssues) {
 
 async function findStatus(issuesList, prCommits, prCreator) {
 	let statuses = [];
-	if (prCreator === 'dependabot[bot]') {
+	if (prCreator.match(/dependabot\[bot\]|oneflow/)) {
 		statuses.push('success');
 	} else {
 		await issuesList.forEach((issue) => {
