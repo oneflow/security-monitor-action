@@ -38,6 +38,8 @@ async function run() {
 		const repoOwner = ctx.getRepoOwner(context);
 		const pullRequestHeadSha = ctx.getPullRequestHeadSha(context);
 		const pullRequestNumber = ctx.getPullRequestNumber(context);
+		const pullRequestTitle = ctx.getPullRequestTitle(context);
+		const pullRequestBody = ctx.getPullRequestBody(context);
 		const pullRequestCreator = ctx.getPullRequestCreator(context);
 		const repoDefaultBranch = ctx.getDefaultBranch(context);
 		const repoInfo = await action.getVulnerabilities(repoName, repoOwner, process.env.GITHUB_TOKEN || ghPat);
@@ -89,7 +91,13 @@ async function run() {
 				`${context.payload.repository.name} repo has ${repoVulnerabilityAlerts.length} vulnerability alert(s)`,
 			);
 			if (criticalIssues.length) {
-				const commitStatus = await action.findStatus(criticalIssues, prCommits, pullRequestCreator);
+				const commitStatus = await action.findStatus(
+					criticalIssues,
+					prCommits,
+					pullRequestCreator,
+					pullRequestTitle,
+					pullRequestBody,
+				);
 				const prMessage =
 					commitStatus === 'failure'
 						? criticalHighIssues(
@@ -123,7 +131,13 @@ async function run() {
 				});
 			} else {
 				if (!pullRequestCreator.match(/dependabot\[bot\]|oneflow/)) {
-					const commitStatus = await action.findStatus(otherIssues, prCommits, pullRequestCreator);
+					const commitStatus = await action.findStatus(
+						otherIssues,
+						prCommits,
+						pullRequestCreator,
+						pullRequestTitle,
+						pullRequestBody,
+					);
 					const prMessage =
 						commitStatus === 'failure'
 							? minorIssues(await action.issuesMessage(repoInfo, otherIssues))
@@ -24651,16 +24665,20 @@ async function issuesMessage(repoInfo, vulnerabilityIssues) {
 	return issuesList;
 }
 
-async function findStatus(issuesList, prCommits, prCreator) {
+async function findStatus(issuesList, prCommits, prCreator, prTitle, prBody) {
 	let statuses = [];
 	if (prCreator.match(/dependabot\[bot\]|oneflow/)) {
 		statuses.push('success');
 	} else {
 		await issuesList.forEach((issue) => {
 			const packageName = issue.securityVulnerability.package.name;
-			const commitMessage = new RegExp(`.*[B|b]ump\\s${packageName}\\s.*`);
+			const unblock = new RegExp(`(.*bump\\s+${packageName})|(.*update\\s+vulnerable\\s+dependencies.*)`, 'i');
 			prCommits.forEach((commit) => {
-				statuses.push(commit.commit.messageHeadline.match(commitMessage) ? 'success' : 'failure');
+				statuses.push(
+					_.some([commit.commit.messageHeadline, prTitle, prBody], (message) => message.match(unblock))
+						? 'success'
+						: 'failure',
+				);
 			});
 		});
 	}
@@ -24704,6 +24722,14 @@ function getPullRequestNumber(context) {
 	return context.payload.pull_request.number;
 }
 
+function getPullRequestTitle(context) {
+	return context.payload.pull_request.title;
+}
+
+function getPullRequestBody(context) {
+	return context.payload.pull_request.body;
+}
+
 function getPullRequestHeadSha(context) {
 	return context.payload.pull_request.head.sha;
 }
@@ -24719,6 +24745,8 @@ module.exports = {
 	getPullRequestUrl,
 	getPullRequestCreator,
 	getPullRequestNumber,
+	getPullRequestTitle,
+	getPullRequestBody,
 	getPullRequestHeadSha,
 	getDefaultBranch,
 };
@@ -24784,7 +24812,7 @@ Congrats! The repository doesn't have security issues with CRITICAL or HIGH seve
 You are good to go but it would be cool if you could review these PRs dependabot created for you or fix the issue yourself if there's no PR yet:
 ${issuesList}
 
-If you're planning on fixing a dependency, make sure to include \`bump {packageName} from {version} to {version}\` into your commit message`,
+If you're planning on fixing a dependency, make sure to include \`bump {packageName}\` into your commit message`,
 
 	criticalHighIssues: (issuesCount, issuesList) => `
 Your PR is blocked because this repository has ${issuesCount} security vulnerabillity issue(s) with critical or high severity:
@@ -24792,9 +24820,11 @@ ${issuesList}
 
 To unblock your PR you must fix security issues with CRITICAL or HIGH severity.
 
-If there's no dependabot PR to fix the issue yet and you're planning on fixing it, make sure to include \`bump {packageName} from {version} to {version}\` into your commit message.
+If there's no dependabot PR to fix the issue yet and you're planning on fixing it, make sure to include \`bump {packageName}\` into your commit message.
 
-If you already fixed this issue in a different PR, please merge your branch with the default repo branch to unblock it.`,
+If you already fixed this issue in a different PR, please merge your branch with the default repo branch to unblock it.
+
+If you already fixed the issue in this PR but didn't include \`bump {packageName}\` into your commit message, please edit the PR title or body so it includes \`bump {packageName}\` or \`update vulnerable dependencies\`. This will trigger the action again and will unblock the PR.`,
 
 	criticalHighIssuesFixed: 'It seems like your PR fixes one of the security vulnerability issues. Good job!',
 

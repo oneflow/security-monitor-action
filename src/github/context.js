@@ -22,6 +22,14 @@ function getPullRequestNumber(context) {
 	return context.payload.pull_request.number;
 }
 
+function getPullRequestTitle(context) {
+	return context.payload.pull_request.title;
+}
+
+function getPullRequestBody(context) {
+	return context.payload.pull_request.body;
+}
+
 function getPullRequestHeadSha(context) {
 	return context.payload.pull_request.head.sha;
 }
@@ -37,6 +45,8 @@ module.exports = {
 	getPullRequestUrl,
 	getPullRequestCreator,
 	getPullRequestNumber,
+	getPullRequestTitle,
+	getPullRequestBody,
 	getPullRequestHeadSha,
 	getDefaultBranch,
 };

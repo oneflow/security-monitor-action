@@ -32,6 +32,8 @@ async function run() {
 		const repoOwner = ctx.getRepoOwner(context);
 		const pullRequestHeadSha = ctx.getPullRequestHeadSha(context);
 		const pullRequestNumber = ctx.getPullRequestNumber(context);
+		const pullRequestTitle = ctx.getPullRequestTitle(context);
+		const pullRequestBody = ctx.getPullRequestBody(context);
 		const pullRequestCreator = ctx.getPullRequestCreator(context);
 		const repoDefaultBranch = ctx.getDefaultBranch(context);
 		const repoInfo = await action.getVulnerabilities(repoName, repoOwner, process.env.GITHUB_TOKEN || ghPat);
@@ -83,7 +85,13 @@ async function run() {
 				`${context.payload.repository.name} repo has ${repoVulnerabilityAlerts.length} vulnerability alert(s)`,
 			);
 			if (criticalIssues.length) {
-				const commitStatus = await action.findStatus(criticalIssues, prCommits, pullRequestCreator);
+				const commitStatus = await action.findStatus(
+					criticalIssues,
+					prCommits,
+					pullRequestCreator,
+					pullRequestTitle,
+					pullRequestBody,
+				);
 				const prMessage =
 					commitStatus === 'failure'
 						? criticalHighIssues(
@@ -117,7 +125,13 @@ async function run() {
 				});
 			} else {
 				if (!pullRequestCreator.match(/dependabot\[bot\]|oneflow/)) {
-					const commitStatus = await action.findStatus(otherIssues, prCommits, pullRequestCreator);
+					const commitStatus = await action.findStatus(
+						otherIssues,
+						prCommits,
+						pullRequestCreator,
+						pullRequestTitle,
+						pullRequestBody,
+					);
 					const prMessage =
 						commitStatus === 'failure'
 							? minorIssues(await action.issuesMessage(repoInfo, otherIssues))

@@ -31,6 +31,16 @@ test('get pull request number', () => {
 	expect(context.getPullRequestNumber(ctx)).toBe(15);
 });
 
+test('get pull request title', () => {
+	const ctx = { payload: prEvent };
+	expect(context.getPullRequestTitle(ctx)).toBe('Create test.js');
+});
+
+test('get pull request body', () => {
+	const ctx = { payload: prEvent };
+	expect(context.getPullRequestBody(ctx)).toBe('Test');
+});
+
 test('get pull request head sha', () => {
 	const ctx = { payload: prEvent };
 	expect(context.getPullRequestHeadSha(ctx)).toBe('aaaa1111');

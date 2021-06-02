@@ -41,16 +41,20 @@ async function issuesMessage(repoInfo, vulnerabilityIssues) {
 	return issuesList;
 }
 
-async function findStatus(issuesList, prCommits, prCreator) {
+async function findStatus(issuesList, prCommits, prCreator, prTitle, prBody) {
 	let statuses = [];
 	if (prCreator.match(/dependabot\[bot\]|oneflow/)) {
 		statuses.push('success');
 	} else {
 		await issuesList.forEach((issue) => {
 			const packageName = issue.securityVulnerability.package.name;
-			const commitMessage = new RegExp(`.*[B|b]ump\\s${packageName}\\s.*`);
+			const unblock = new RegExp(`(.*bump\\s+${packageName})|(.*update\\s+vulnerable\\s+dependencies.*)`, 'i');
 			prCommits.forEach((commit) => {
-				statuses.push(commit.commit.messageHeadline.match(commitMessage) ? 'success' : 'failure');
+				statuses.push(
+					_.some([commit.commit.messageHeadline, prTitle, prBody], (message) => message.match(unblock))
+						? 'success'
+						: 'failure',
+				);
 			});
 		});
 	}
