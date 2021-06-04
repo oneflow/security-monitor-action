@@ -24,6 +24,7 @@ on:
       - reopened
       - synchronize
       - review_requested
+      - edited
     branches:
       - "*"
 
