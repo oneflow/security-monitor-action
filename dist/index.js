@@ -24675,7 +24675,9 @@ async function findStatus(issuesList, prCommits, prCreator, prTitle, prBody) {
 			const unblock = new RegExp(`(.*bump\\s+${packageName})|(.*update\\s+vulnerable\\s+dependencies.*)`, 'i');
 			prCommits.forEach((commit) => {
 				statuses.push(
-					_.some([commit.commit.messageHeadline, prTitle, prBody], (message) => message.match(unblock))
+					_.some([commit.commit.messageHeadline, prTitle, prBody], (message) =>
+						message ? message.match(unblock) : false,
+					)
 						? 'success'
 						: 'failure',
 				);
