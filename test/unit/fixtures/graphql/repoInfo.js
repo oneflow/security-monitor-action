@@ -78,7 +78,7 @@ module.exports = {
 			vulnerabilityAlerts: {
 				nodes: [
 					{
-						dismissedAt: null,
+						state: 'OPEN',
 						securityVulnerability: {
 							severity: 'HIGH',
 							advisory: {
@@ -95,7 +95,7 @@ module.exports = {
 						},
 					},
 					{
-						dismissedAt: '2021-05-20T10:21:15Z',
+						state: 'DISMISSED',
 						securityVulnerability: {
 							severity: 'LOW',
 							advisory: {
@@ -112,7 +112,7 @@ module.exports = {
 						},
 					},
 					{
-						dismissedAt: null,
+						state: 'OPEN',
 						securityVulnerability: {
 							severity: 'MODERATE',
 							advisory: {
@@ -129,7 +129,7 @@ module.exports = {
 						},
 					},
 					{
-						dismissedAt: null,
+						state: 'OPEN',
 						securityVulnerability: {
 							severity: 'HIGH',
 							advisory: {
@@ -146,7 +146,7 @@ module.exports = {
 						},
 					},
 					{
-						dismissedAt: null,
+						state: 'OPEN',
 						securityVulnerability: {
 							severity: 'HIGH',
 							advisory: {
@@ -163,7 +163,7 @@ module.exports = {
 						},
 					},
 					{
-						dismissedAt: null,
+						state: 'OPEN',
 						securityVulnerability: {
 							severity: 'HIGH',
 							advisory: {
@@ -180,7 +180,7 @@ module.exports = {
 						},
 					},
 					{
-						dismissedAt: null,
+						state: 'OPEN',
 						securityVulnerability: {
 							severity: 'LOW',
 							advisory: {
@@ -197,7 +197,7 @@ module.exports = {
 						},
 					},
 					{
-						dismissedAt: null,
+						state: 'OPEN',
 						securityVulnerability: {
 							severity: 'LOW',
 							advisory: {
@@ -214,7 +214,7 @@ module.exports = {
 						},
 					},
 					{
-						dismissedAt: null,
+						state: 'OPEN',
 						securityVulnerability: {
 							severity: 'HIGH',
 							advisory: {
@@ -231,7 +231,7 @@ module.exports = {
 						},
 					},
 					{
-						dismissedAt: null,
+						state: 'OPEN',
 						securityVulnerability: {
 							severity: 'HIGH',
 							advisory: {
@@ -248,7 +248,7 @@ module.exports = {
 						},
 					},
 					{
-						dismissedAt: null,
+						state: 'OPEN',
 						securityVulnerability: {
 							severity: 'HIGH',
 							advisory: {
@@ -265,7 +265,7 @@ module.exports = {
 						},
 					},
 					{
-						dismissedAt: null,
+						state: 'OPEN',
 						securityVulnerability: {
 							severity: 'CRITICAL',
 							advisory: {

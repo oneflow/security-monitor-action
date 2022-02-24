@@ -9,7 +9,7 @@ test('check message', async () => {
 describe('find status', () => {
 	const issue = [
 		{
-			dismissedAt: null,
+			state: 'OPEN',
 			securityVulnerability: {
 				severity: 'HIGH',
 				advisory: {
