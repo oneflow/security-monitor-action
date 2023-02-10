@@ -1,5 +1,8 @@
 # security-monitor-action
 
+## THIS REPO HAS BEEN MIGRATED TO GHE AND IT IS VIRTUALLY LOCKED. PLEASE, USE https://github.azc.ext.hp.com/workflow-solutions/security-monitor-action
+
+
 A GitHub Action that checks if repo has security vulnerability issues.
 
 ## Usage
